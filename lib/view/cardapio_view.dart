@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -35,10 +33,7 @@ class _CardapioViewState extends State<CardapioView> {
       body: Padding(
         padding: EdgeInsets.all(20),
         child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection(
-                  'itens_cardapios') // Ajuste aqui para pegar os itens do cardápio diretamente
-              .snapshots(),
+          stream: FirebaseFirestore.instance.collection('itens_cardapios').snapshots(),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
@@ -49,44 +44,80 @@ class _CardapioViewState extends State<CardapioView> {
                 if (snapshot.hasError) {
                   return Center(child: Text('Erro ao carregar dados.'));
                 }
+
                 final dados = snapshot.requireData;
                 if (dados.size > 0) {
-                  return ListView.builder(
-                    itemCount: dados.size,
-                    itemBuilder: (context, index) {
-                      dynamic item = dados.docs[index].data();
-                      String nome = item['nome'] ?? 'Sem nome';
-                      String preco = item['preco'] ?? 'Preço não disponível';
-                      String imagem = item['imagem'] ?? '';
+                  // Agrupando os itens por categoria
+                  Map<String, List<dynamic>> categorias = {};
 
-                      return Card(
-                        margin: EdgeInsets.only(bottom: 10),
-                        child: ListTile(
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: imagem.isNotEmpty
-                                  ? Image.network(imagem,
-                                      fit: BoxFit.cover, width: 60, height: 60)
-                                  : Icon(Icons
-                                      .image_not_supported), // Caso a imagem não exista
-                            ),
-                            title: Text(
-                              nome, // Nome do prato
-                              style: TextStyle(fontSize: 22),
-                            ),
-                            subtitle: Text(
-                              preco, // Preço do prato
+                  for (var doc in dados.docs) {
+                    Map<String, dynamic> item = doc.data() as Map<String, dynamic>;
+                    String categoria = item['categoria'];
+
+                    if (!categorias.containsKey(categoria)) {
+                      categorias[categoria] = [];
+                    }
+                    categorias[categoria]?.add(item);
+                  }
+
+                  return ListView(
+                    children: categorias.keys.map((categoria) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Título da categoria
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Text(
+                              categoria, // Nome da categoria
                               style: TextStyle(
-                                  fontSize: 14, fontStyle: FontStyle.italic),
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
-                            onTap: () {
-                              String idPrato = dados.docs[index]
-                                  .id; // Aqui pegamos o ID do documento do Firebase
-                              Navigator.pushNamed(context, 'detalhes',
-                                  arguments: idPrato);
-                            }),
+                          ),
+                          // Itens da categoria
+                          Column(
+                            children: categorias[categoria]!.map<Widget>((item) {
+                              String nome = item['nome'] ?? 'Sem nome';
+                              String preco = item['preco'] ?? 'Preço não disponível';
+                              String imagem = item['imagem'] ?? '';
+
+                              return Card(
+                                margin: EdgeInsets.only(bottom: 10),
+                                child: ListTile(
+                                  leading: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: imagem.isNotEmpty
+                                        ? Image.network(imagem, fit: BoxFit.cover, width: 60, height: 60)
+                                        : Icon(Icons.image_not_supported),
+                                  ),
+                                  title: Text(
+                                    nome,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  subtitle: Text(
+                                    preco,
+                                    style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                                  ),
+                                  onTap: () {
+                                    var prato = dados.docs.firstWhere(
+                                      (doc) {
+                                        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+                                        return data['nome'] == nome;
+                                      },
+                                    );
+                                    String idPrato = prato.id; // Obter o ID diretamente do prato encontrado
+                                    Navigator.pushNamed(context, 'detalhes', arguments: idPrato);
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       );
-                    },
+                    }).toList(),
                   );
                 } else {
                   return Center(child: Text('Nenhum item encontrado.'));

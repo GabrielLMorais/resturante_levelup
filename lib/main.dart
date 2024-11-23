@@ -9,12 +9,8 @@ import 'package:restaurante_levelup/view/detalhes_view.dart';
 import 'package:restaurante_levelup/view/login_view.dart';
 
 Future<void> main() async {
-
-  //
-  //INICIALIZAR O FIREBASE
-  //
   await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   FirebaseService().inicializarDados();
   runApp(
@@ -43,4 +39,3 @@ class MainView extends StatelessWidget {
     );
   }
 }
-
