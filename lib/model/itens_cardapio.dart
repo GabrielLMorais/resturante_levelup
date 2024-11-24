@@ -1,7 +1,7 @@
 class ItensCardapio {
   final String nome;
   final String descricao;
-  final String preco;
+  final double preco;
   final String imagem;
   final bool ativo;
   final String categoria;

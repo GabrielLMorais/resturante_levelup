@@ -7,6 +7,7 @@ import 'package:restaurante_levelup/view/cadastrar_view.dart';
 import 'package:restaurante_levelup/view/cardapio_view.dart';
 import 'package:restaurante_levelup/view/detalhes_view.dart';
 import 'package:restaurante_levelup/view/login_view.dart';
+import 'package:restaurante_levelup/view/pedido_view.dart';
 
 Future<void> main() async {
   await Firebase.initializeApp(
@@ -35,6 +36,7 @@ class MainView extends StatelessWidget {
         'login': (context) => LoginView(),
         'cardapio': (context) => CardapioView(),
         'detalhes': (context) => DetalhesView(),
+        'pedido': (context) => PedidoView(),
       },
     );
   }

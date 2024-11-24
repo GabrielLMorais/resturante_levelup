@@ -36,21 +36,30 @@ class Pedido {
 
 class ItemPedido {
   String itemId;
+  String nome;
+  String imagem;
   double preco;
   int quantidade;
+  String status;
 
   ItemPedido({
     required this.itemId,
+    required this.nome,
+    required this.imagem,
     required this.preco,
     required this.quantidade,
+    required this.status,
   });
 
   // Método para converter um item em um objeto ItemPedido
   factory ItemPedido.fromMap(Map<String, dynamic> map) {
     return ItemPedido(
       itemId: map['item_id'],
+      nome: map['nome'],
+      imagem: map['imagem'],
       preco: map['preco'],
       quantidade: map['quantidade'],
+      status: map['status'],
     );
   }
 
@@ -58,8 +67,11 @@ class ItemPedido {
   Map<String, dynamic> toMap() {
     return {
       'item_id': itemId,
+      'nome': nome,
+      'imagem': imagem,
       'preco': preco,
       'quantidade': quantidade,
+      'status': status,
     };
   }
 }

@@ -1,5 +1,8 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:restaurante_levelup/model/pedido.dart';
 
 class DetalhesView extends StatefulWidget {
   const DetalhesView({super.key});
@@ -9,9 +12,11 @@ class DetalhesView extends StatefulWidget {
 }
 
 class _DetalhesViewState extends State<DetalhesView> {
+  String? nome;
+  double? preco;
+
   @override
   Widget build(BuildContext context) {
-    // Recebe o idPrato da navegação
     final String idPrato = ModalRoute.of(context)!.settings.arguments as String;
 
     return Scaffold(
@@ -45,7 +50,7 @@ class _DetalhesViewState extends State<DetalhesView> {
         child: FutureBuilder<DocumentSnapshot>(
           future: FirebaseFirestore.instance
               .collection('itens_cardapios')
-              .doc(idPrato)  // Usando o idPrato recebido para pegar o prato específico
+              .doc(idPrato)
               .get(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -57,8 +62,9 @@ class _DetalhesViewState extends State<DetalhesView> {
             }
 
             var prato = snapshot.data!;
-            String nome = prato['nome'] ?? 'Sem nome';
-            String preco = prato['preco'] ?? 'Preço não disponível';
+            nome = prato['nome'] ?? 'Sem nome';
+            preco = prato['preco'] ??
+                0.0; // Agora preco é tratado como double diretamente
             String imagem = prato['imagem'] ?? '';
             String descricao = prato['descricao'] ?? 'Sem descrição';
 
@@ -87,7 +93,7 @@ class _DetalhesViewState extends State<DetalhesView> {
                     ),
                     SizedBox(height: 20),
                     Text(
-                      nome,
+                      nome!,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 30,
@@ -111,7 +117,7 @@ class _DetalhesViewState extends State<DetalhesView> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      preco,
+                      'R\$ ${preco!.toStringAsFixed(2)}',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -125,6 +131,50 @@ class _DetalhesViewState extends State<DetalhesView> {
           },
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (nome != null && preco != null) {
+            _adicionarAoPedido(idPrato, nome!, preco!);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Dados ainda não carregados!")),
+            );
+          }
+        },
+        child: Icon(Icons.shopping_cart),
+      ),
     );
+  }
+
+  void _adicionarAoPedido(String idPrato, String nome, double preco) async {
+    var pratoSnapshot = await FirebaseFirestore.instance
+        .collection('itens_cardapios')
+        .doc(idPrato)
+        .get();
+    String imagem = pratoSnapshot['imagem'] ??
+        ''; // Aqui, capturamos a imagem corretamente.
+
+    var itemPedido = ItemPedido(
+      itemId: idPrato,
+      nome: nome,
+      imagem: imagem, // Agora a imagem está definida corretamente
+      preco: preco,
+      quantidade: 1,
+      status: "Preparando",
+    );
+
+    var pedido = Pedido(
+      uid: FirebaseFirestore.instance.collection('pedidos').doc().id,
+      status: 'Preparando',
+      dataHora: DateTime.now().toString(),
+      itens: [itemPedido],
+    );
+
+    await FirebaseFirestore.instance
+        .collection('pedidos')
+        .doc(pedido.uid)
+        .set(pedido.toMap());
+
+    Navigator.pushNamed(context, 'pedido');
   }
 }

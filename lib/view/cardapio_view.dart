@@ -52,7 +52,6 @@ class _CardapioViewState extends State<CardapioView> {
 
                 final dadosCategorias = snapshot.requireData;
                 if (dadosCategorias.size > 0) {
-                  // Lista de categorias ordenada
                   List<Map<String, dynamic>> categorias = [];
                   for (var doc in dadosCategorias.docs) {
                     categorias.add(doc.data() as Map<String, dynamic>);
@@ -78,7 +77,6 @@ class _CardapioViewState extends State<CardapioView> {
 
                           final dadosItens = snapshotItens.requireData;
                           if (dadosItens.size > 0) {
-                            // Agrupando os itens por categoria
                             Map<String, List<dynamic>> itensPorCategoria = {};
 
                             for (var doc in dadosItens.docs) {
@@ -101,12 +99,11 @@ class _CardapioViewState extends State<CardapioView> {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // Título da categoria
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8),
                                       child: Text(
-                                        nomeCategoria, // Nome da categoria
+                                        nomeCategoria,
                                         style: TextStyle(
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,
@@ -114,14 +111,12 @@ class _CardapioViewState extends State<CardapioView> {
                                         ),
                                       ),
                                     ),
-                                    // Itens da categoria
                                     Column(
                                       children:
                                           itensCategoria.map<Widget>((item) {
                                         String nome =
                                             item['nome'] ?? 'Sem nome';
-                                        String preco = item['preco'] ??
-                                            'Preço não disponível';
+                                        double preco = item['preco'] ?? 0.0;
                                         String imagem = item['imagem'] ?? '';
 
                                         return Card(
@@ -137,15 +132,13 @@ class _CardapioViewState extends State<CardapioView> {
                                                   return data['nome'] == nome;
                                                 },
                                               );
-                                              String idPrato = prato
-                                                  .id; // Obter o ID diretamente do prato encontrado
+                                              String idPrato = prato.id;
                                               Navigator.pushNamed(
                                                   context, 'detalhes',
                                                   arguments: idPrato);
                                             },
                                             child: Row(
                                               children: [
-                                                // Container com a imagem
                                                 Container(
                                                   width: 60,
                                                   height: 60,
@@ -167,7 +160,6 @@ class _CardapioViewState extends State<CardapioView> {
                                                     ),
                                                   ),
                                                 ),
-                                                // Texto ao lado da imagem
                                                 Expanded(
                                                   child: Padding(
                                                     padding: const EdgeInsets
@@ -187,7 +179,7 @@ class _CardapioViewState extends State<CardapioView> {
                                                               fontSize: 18),
                                                         ),
                                                         Text(
-                                                          preco,
+                                                          'R\$ ${preco.toStringAsFixed(2)}',
                                                           style: TextStyle(
                                                               fontSize: 14,
                                                               fontStyle:
