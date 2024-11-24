@@ -6,7 +6,8 @@ class ItensCardapio {
   final bool ativo;
   final String categoria;
 
-  ItensCardapio(this.nome, this.descricao, this.preco, this.imagem, this.ativo, this.categoria);
+  ItensCardapio(this.nome, this.descricao, this.preco, this.imagem, this.ativo,
+      this.categoria);
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{

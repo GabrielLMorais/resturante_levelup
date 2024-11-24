@@ -63,8 +63,7 @@ class _DetalhesViewState extends State<DetalhesView> {
 
             var prato = snapshot.data!;
             nome = prato['nome'] ?? 'Sem nome';
-            preco = prato['preco'] ??
-                0.0; // Agora preco é tratado como double diretamente
+            preco = prato['preco'] ?? 0.0;
             String imagem = prato['imagem'] ?? '';
             String descricao = prato['descricao'] ?? 'Sem descrição';
 
@@ -151,13 +150,12 @@ class _DetalhesViewState extends State<DetalhesView> {
         .collection('itens_cardapios')
         .doc(idPrato)
         .get();
-    String imagem = pratoSnapshot['imagem'] ??
-        ''; // Aqui, capturamos a imagem corretamente.
+    String imagem = pratoSnapshot['imagem'] ?? '';
 
     var itemPedido = ItemPedido(
       itemId: idPrato,
       nome: nome,
-      imagem: imagem, // Agora a imagem está definida corretamente
+      imagem: imagem,
       preco: preco,
       quantidade: 1,
       status: "Preparando",

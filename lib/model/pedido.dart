@@ -11,7 +11,6 @@ class Pedido {
     required this.itens,
   });
 
-  // Método para converter um documento do Firestore em um objeto Pedido
   factory Pedido.fromMap(Map<String, dynamic> map) {
     return Pedido(
       uid: map['uid'],
@@ -23,7 +22,6 @@ class Pedido {
     );
   }
 
-  // Método para converter um objeto Pedido em um Map para o Firestore
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
@@ -51,7 +49,6 @@ class ItemPedido {
     required this.status,
   });
 
-  // Método para converter um item em um objeto ItemPedido
   factory ItemPedido.fromMap(Map<String, dynamic> map) {
     return ItemPedido(
       itemId: map['item_id'],
@@ -63,7 +60,6 @@ class ItemPedido {
     );
   }
 
-  // Método para converter um ItemPedido em um Map para o Firestore
   Map<String, dynamic> toMap() {
     return {
       'item_id': itemId,

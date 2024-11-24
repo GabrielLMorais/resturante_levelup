@@ -202,13 +202,20 @@ class _CardapioViewState extends State<CardapioView> {
                             );
                           } else {
                             return Center(
-                                child: Text('Nenhum item encontrado.'));
+                                child: Text(
+                              'Nenhum item encontrado.',
+                              style: TextStyle(color: Colors.white),
+                            ));
                           }
                       }
                     },
                   );
                 } else {
-                  return Center(child: Text('Nenhuma categoria encontrada.'));
+                  return Center(
+                      child: Text(
+                    'Nenhuma categoria encontrada.',
+                    style: TextStyle(color: Colors.white),
+                  ));
                 }
             }
           },

@@ -60,10 +60,18 @@ class _CadastrarViewState extends State<CadastrarView> {
                       ),
                     ),
                     SizedBox(height: 16),
-                    campoTexto('Nome', txtNome, Icons.person, 'Informe seu nome', senha: false),
-                    campoTexto('Email', txtEmail, Icons.email, 'Informe seu e-mail', senha: false),
-                    campoTexto('Senha', txtSenha, Icons.password, 'Informe sua senha', senha: true),
-                    campoTexto('Confirme a Senha', txtConfirmeSenha, Icons.password, 'Confirme sua senha', senha: true),
+                    campoTexto(
+                        'Nome', txtNome, Icons.person, 'Informe seu nome',
+                        senha: false),
+                    campoTexto(
+                        'Email', txtEmail, Icons.email, 'Informe seu e-mail',
+                        senha: false),
+                    campoTexto(
+                        'Senha', txtSenha, Icons.password, 'Informe sua senha',
+                        senha: true),
+                    campoTexto('Confirme a Senha', txtConfirmeSenha,
+                        Icons.password, 'Confirme sua senha',
+                        senha: true),
                     if (!_senhasIguais)
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
@@ -81,12 +89,14 @@ class _CadastrarViewState extends State<CadastrarView> {
                             foregroundColor: Colors.white,
                             minimumSize: Size(800, 50),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(6)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(6)),
                             ),
                           ),
                           onPressed: () {
                             _verificarSenhas();
-                            if (_formKey.currentState!.validate() && _senhasIguais) {
+                            if (_formKey.currentState!.validate() &&
+                                _senhasIguais) {
                               LoginController().criarConta(
                                 context,
                                 txtNome.text,
@@ -113,7 +123,8 @@ class _CadastrarViewState extends State<CadastrarView> {
                             foregroundColor: Colors.white,
                             minimumSize: Size(800, 50),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(Radius.circular(6)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(6)),
                             ),
                           ),
                           onPressed: () {

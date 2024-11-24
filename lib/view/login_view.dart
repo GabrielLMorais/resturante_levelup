@@ -67,8 +67,7 @@ class _LoginViewState extends State<LoginView> {
                             "Esqueceu a senha?",
                             style: TextStyle(
                                 color: Colors.white,
-                                fontWeight: FontWeight.bold
-                              ),
+                                fontWeight: FontWeight.bold),
                           ),
                           content: Container(
                             height: 150,
@@ -115,7 +114,8 @@ class _LoginViewState extends State<LoginView> {
                                   context,
                                   txtEmailEsqueceuSenha.text,
                                 );
-                                Navigator.pushReplacementNamed(context, 'login');
+                                Navigator.pushReplacementNamed(
+                                    context, 'login');
                               },
                               child: Text('Enviar'),
                             ),

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:restaurante_levelup/model/pedido.dart';
@@ -10,9 +12,6 @@ class PedidoView extends StatefulWidget {
 }
 
 class _PedidoViewState extends State<PedidoView> {
-  double _total = 0;  // Variável para armazenar o total localmente
-
-  // Função de cálculo do preço total
   String _calcularPrecoTotal(List<Pedido> pedidos) {
     double total = 0;
     for (var pedido in pedidos) {
@@ -23,7 +22,6 @@ class _PedidoViewState extends State<PedidoView> {
     return 'R\$ ${total.toStringAsFixed(2).replaceAll('.', ',')}';
   }
 
-  // Função para atualizar a quantidade de um item
   void _atualizarQuantidade(Pedido pedido, String nomeItem, int quantidade) {
     setState(() {
       var item = pedido.itens.firstWhere((it) => it.nome == nomeItem);
@@ -33,46 +31,44 @@ class _PedidoViewState extends State<PedidoView> {
       }
     });
 
-    // Atualiza o pedido no Firestore
     FirebaseFirestore.instance.collection('pedidos').doc(pedido.uid).update({
       'itens': pedido.itens.map((e) => e.toMap()).toList(),
     });
   }
 
-  // Função para remover item do pedido
   void _removerItem(Pedido pedido, String nomeItem) {
     setState(() {
       pedido.itens.removeWhere((item) => item.nome == nomeItem);
       if (pedido.itens.isEmpty) {
-        FirebaseFirestore.instance.collection('pedidos').doc(pedido.uid).delete();
+        FirebaseFirestore.instance
+            .collection('pedidos')
+            .doc(pedido.uid)
+            .delete();
       } else {
-        FirebaseFirestore.instance.collection('pedidos').doc(pedido.uid).update({
+        FirebaseFirestore.instance
+            .collection('pedidos')
+            .doc(pedido.uid)
+            .update({
           'itens': pedido.itens.map((e) => e.toMap()).toList(),
         });
       }
     });
   }
 
-  // Função para finalizar a compra e zerar o total
   void _finalizarCompra() {
     FirebaseFirestore.instance.collection('pedidos').get().then((snapshot) {
       for (var doc in snapshot.docs) {
-        // Atualiza o status do pedido para "Finalizado"
         doc.reference.update({
           'status': 'Finalizado',
         });
       }
     });
 
-    // Zera o total localmente
-    setState(() {
-      _total = 0;
-    });
-
-    // Exibe a mensagem de sucesso
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Compra concluída com sucesso!')),
     );
+
+    setState(() {});
   }
 
   @override
@@ -96,7 +92,10 @@ class _PedidoViewState extends State<PedidoView> {
           IconButton(
             padding: EdgeInsets.only(right: 30),
             onPressed: () {
-              FirebaseFirestore.instance.collection('pedidos').get().then((snapshot) {
+              FirebaseFirestore.instance
+                  .collection('pedidos')
+                  .get()
+                  .then((snapshot) {
                 for (var doc in snapshot.docs) {
                   doc.reference.delete();
                 }
@@ -124,19 +123,31 @@ class _PedidoViewState extends State<PedidoView> {
             SizedBox(height: 20),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection('pedidos')
-                    .where('status', isNotEqualTo: 'Finalizado') // Filtra os pedidos com status "Finalizado"
+                stream: FirebaseFirestore.instance
+                    .collection('pedidos')
+                    .where('status', isNotEqualTo: 'Finalizado')
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Erro ao carregar pedidos.'));
+                    return Center(
+                        child: Text(
+                      'Erro ao carregar pedidos.',
+                      style: TextStyle(color: Colors.white),
+                    ));
                   } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Center(child: Text('Nenhum pedido encontrado.'));
+                    return Center(
+                        child: Text(
+                      'Nenhum pedido encontrado.',
+                      style: TextStyle(color: Colors.white),
+                    ));
                   }
 
-                  var pedidos = snapshot.data!.docs.map((doc) => Pedido.fromMap(doc.data() as Map<String, dynamic>)).toList();
+                  var pedidos = snapshot.data!.docs
+                      .map((doc) =>
+                          Pedido.fromMap(doc.data() as Map<String, dynamic>))
+                      .toList();
 
                   return ListView.builder(
                     itemCount: pedidos.length,
@@ -158,7 +169,7 @@ class _PedidoViewState extends State<PedidoView> {
                                     width: 70,
                                     margin: EdgeInsets.fromLTRB(1, 0, 0, 0),
                                     child: Image.network(
-                                      item.imagem, // Assuming each item has an image URL
+                                      item.imagem,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -170,7 +181,8 @@ class _PedidoViewState extends State<PedidoView> {
                                       style: TextStyle(fontSize: 20),
                                     ),
                                     subtitle: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Preço: R\$ ${item.preco.toStringAsFixed(2)}',
@@ -181,7 +193,8 @@ class _PedidoViewState extends State<PedidoView> {
                                             IconButton(
                                               icon: Icon(Icons.remove),
                                               onPressed: () {
-                                                _atualizarQuantidade(pedido, item.nome, -1);
+                                                _atualizarQuantidade(
+                                                    pedido, item.nome, -1);
                                               },
                                             ),
                                             Text(
@@ -191,7 +204,8 @@ class _PedidoViewState extends State<PedidoView> {
                                             IconButton(
                                               icon: Icon(Icons.add),
                                               onPressed: () {
-                                                _atualizarQuantidade(pedido, item.nome, 1);
+                                                _atualizarQuantidade(
+                                                    pedido, item.nome, 1);
                                               },
                                             ),
                                           ],
@@ -219,7 +233,10 @@ class _PedidoViewState extends State<PedidoView> {
             Container(
               padding: EdgeInsets.fromLTRB(20, 20, 20, 42),
               child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection('pedidos').snapshots(),
+                stream: FirebaseFirestore.instance
+                    .collection('pedidos')
+                    .where('status', isNotEqualTo: 'Finalizado')
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                     return Text(
@@ -227,7 +244,10 @@ class _PedidoViewState extends State<PedidoView> {
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     );
                   }
-                  var pedidos = snapshot.data!.docs.map((doc) => Pedido.fromMap(doc.data() as Map<String, dynamic>)).toList();
+                  var pedidos = snapshot.data!.docs
+                      .map((doc) =>
+                          Pedido.fromMap(doc.data() as Map<String, dynamic>))
+                      .toList();
                   return Text(
                     'Total: ${_calcularPrecoTotal(pedidos)}',
                     style: TextStyle(color: Colors.white, fontSize: 20),
@@ -242,7 +262,7 @@ class _PedidoViewState extends State<PedidoView> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            onPressed: _finalizarCompra,  // Chama a função de finalizar a compra
+            onPressed: _finalizarCompra,
             child: Icon(Icons.check),
           ),
           SizedBox(width: 10),
