@@ -28,6 +28,7 @@ class FirebaseService {
       await itensRef.add(ItensCardapio('Pizza de frango', 'Descrição da pizza de frango', 'R\$45,99', 'assets/imagens/pizzaf.png', true, 'Pizzas').toJson());
       await itensRef.add(ItensCardapio('Batata frita', 'Descrição da batata frita', 'R\$19,99', 'assets/imagens/batata-frita.png', true, 'Outros').toJson());
       await itensRef.add(ItensCardapio('Lanche de outra', 'Descrição do lanche de outra', 'R\$27,99', 'assets/imagens/hamburguer.png', true, 'Lanches').toJson());
+      await itensRef.add(ItensCardapio('Pizza de outra', 'Descrição da pizza de outra', 'R\$45,99', 'assets/imagens/pizzaf.png', true, 'Pizzas').toJson());
     }
   }
 }
